@@ -1,65 +1,119 @@
-import { Button, Dimensions, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import { Button, Dimensions, StyleSheet, View, PermissionsAndroid } from 'react-native';
+import React, { useEffect } from 'react';
 import { Calendar } from 'react-native-calendario';
 import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
+import Toast from 'react-native-toast-message';
+import RNCalendarEvents from 'react-native-calendar-events';
+
+// https://github.com/wmcmahan/react-native-calendar-events#event-fields
 
 const triggerNotifications = async () => {
-    
-	await Notifications.scheduleNotificationAsync({
-		content: {
-			title: ' Te Llama Jorge! 📬',
-			body: 'Hola, soy Jorge de Recepcion.. Te llamaba por el tema de las toallas?',
-			data: { data: null },
-		},
-		trigger: { seconds: 1},
-	});
+    await Notifications.scheduleNotificationAsync({
+        content: {
+            title: ' Te Llama Jorge! 📬',
+            body: 'Hola, soy Jorge de Recepcion.. Te llamaba por el tema de las toallas?'
+        },
+        trigger: { seconds: 1 }
+    });
+    const showToast = () => {
+        Toast.show({
+            type: 'success',
+            text1: 'Te Llama Jorge! 📬',
+            text2: 'Hola, soy Jorge de Recepcion.. Te llamaba por el tema de las toallas?'
+        });
+    };
+
+    showToast();
 };
 
 Notifications.setNotificationHandler({
-	handleNotification: async () => {
-		return {
+    handleNotification: async () => {
+        return {
             shouldPlaySound: false,
             shouldSetBadge: true,
-			shouldShowAlert: true,
-			priority: Notifications.AndroidNotificationPriority.MAX,
-		};
-	},
+            shouldShowAlert: true,
+            priority: Notifications.AndroidNotificationPriority.MAX
+        };
+    }
 });
 
 const Home = () => {
-	return (
-		<View style={styles.container}>
-			<View style={styles.calendar}>
-				<Calendar
-					onPress={(date) => console.log(date)}
-					firstDayMonday={true}
-					monthHeight={300}
-					numberOfMonths={1}
-                    theme={{
-                        activeDayColor: '#222',
-                        monthTitleTextStyle: {
-                            color: '#222',
-                            fontSize: 20,
-                            fontWeight: 'bold',
-                        },
+    useEffect(() => {
+        (async () => {
+            RNCalendarEvents.requestPermissions();
 
-                        dayContentStyle: {
-                            backgroundColor: colors.blue[900],
-                            
+            RNCalendarEvents.findCalendars().then((calendars) => {
+                console.log(calendars);
+            });
+        })();
+    }, []);
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.calendar}>
+                <Calendar
+                    endDate={new Date(2018, 4, 5)}
+                    firstDayMonday={false}
+                    minDate={new Date(2018, 3, 20)}
+                    monthHeight={500}
+                    numberOfMonths={1}
+                    startDate={new Date(2018, 3, 30)}
+                    theme={{
+                        monthTitleTextStyle: {
+                            fontWeight: '300',
+                            fontSize: 20
                         },
+                        emptyMonthContainerStyle: {},
+                        emptyMonthTextStyle: {
+                            fontWeight: '200'
+                        },
+                        weekColumnsContainerStyle: {},
+                        weekColumnStyle: {
+                            paddingVertical: 10
+                        },
+                        weekColumnTextStyle: {
+                            color: '#b6c1cd',
+                            fontSize: 13
+                        },
+                        nonTouchableDayContainerStyle: {},
+                        nonTouchableDayTextStyle: {},
+                        startDateContainerStyle: {},
+                        endDateContainerStyle: {},
+                        dayContainerStyle: {},
+                        dayTextStyle: {
+                            color: colors.blue[900],
+                            fontWeight: '200',
+                            fontSize: 15
+                        },
+                        dayOutOfRangeContainerStyle: {},
+                        dayOutOfRangeTextStyle: {},
+                        todayContainerStyle: {
+                            backgroundColor: colors.blue[500]
+                        },
+                        todayTextStyle: {
+                            color: '#6d95da'
+                        },
+                        activeDayContainerStyle: {
+                            backgroundColor: '#6d95da'
+                        },
+                        activeDayTextStyle: {
+                            color: 'white'
+                        },
+                        nonTouchableLastMonthDayTextStyle: {}
                     }}
-				/>
-			</View>
-			<View>
-				<Button onPress={triggerNotifications} title='307' color='#841584' />
-			</View>
-		</View>
-	);
+                    onPress={(range) => console.log(range)}
+                />
+            </View>
+            <View>
+                <Button color='#841584' title='307' onPress={triggerNotifications} />
+            </View>
+            <Toast />
+        </View>
+    );
 };
 
 export default Home;
-
 
 const colors = {
     blue: {
@@ -70,16 +124,16 @@ const colors = {
         200: '#84D2F6',
         100: '#91E5F6'
     }
-}
+};
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: colors.blue[300],
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	calendar: {
-		width: Dimensions.get('window').width,
-        paddingHorizontal: 20,
-	},
+    container: {
+        flex: 1,
+        backgroundColor: colors.blue[100],
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    calendar: {
+        width: Dimensions.get('window').width,
+        paddingHorizontal: 20
+    }
 });

@@ -23,6 +23,11 @@
         },
         "android": {
             "package": "com.rapofish.cars2",
+            "permissions": [
+                "RECEIVE_BOOT_COMPLETED",
+                "SCHEDULE_EXACT_ALARM",
+                "WRITE_CALENDAR"
+            ],
             "googleServicesFile": "./google-services.json",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
