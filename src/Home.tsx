@@ -1,17 +1,18 @@
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, Dimensions, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { Calendar } from 'react-native-calendario';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 
 const triggerNotifications = async () => {
+    
 	await Notifications.scheduleNotificationAsync({
 		content: {
 			title: ' Te Llama Jorge! 📬',
 			body: 'Hola, soy Jorge de Recepcion.. Te llamaba por el tema de las toallas?',
 			data: { data: null },
 		},
-		trigger: { seconds: 2 },
+		trigger: { seconds: 1},
 	});
 };
 
@@ -19,8 +20,9 @@ Notifications.setNotificationHandler({
 	handleNotification: async () => {
 		return {
             shouldPlaySound: false,
-            shouldSetBadge: false,
+            shouldSetBadge: true,
 			shouldShowAlert: true,
+			priority: Notifications.AndroidNotificationPriority.MAX,
 		};
 	},
 });
@@ -34,6 +36,19 @@ const Home = () => {
 					firstDayMonday={true}
 					monthHeight={300}
 					numberOfMonths={1}
+                    theme={{
+                        activeDayColor: '#222',
+                        monthTitleTextStyle: {
+                            color: '#222',
+                            fontSize: 20,
+                            fontWeight: 'bold',
+                        },
+
+                        dayContentStyle: {
+                            backgroundColor: colors.blue[900],
+                            
+                        },
+                    }}
 				/>
 			</View>
 			<View>
@@ -45,14 +60,26 @@ const Home = () => {
 
 export default Home;
 
+
+const colors = {
+    blue: {
+        900: '#133C55',
+        700: '#26567D',
+        500: '#386FA4',
+        300: '#59A5D8',
+        200: '#84D2F6',
+        100: '#91E5F6'
+    }
+}
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#af0f',
+		backgroundColor: colors.blue[300],
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
 	calendar: {
-		width: 300,
+		width: Dimensions.get('window').width,
+        paddingHorizontal: 20,
 	},
 });

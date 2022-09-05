@@ -18,7 +18,8 @@
             "**/*"
         ],
         "ios": {
-            "supportsTablet": true
+            "supportsTablet": true,
+            "googleServicesFile": "./google-services.json"
         },
         "android": {
             "package": "com.rapofish.cars2",
