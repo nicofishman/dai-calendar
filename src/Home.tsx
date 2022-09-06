@@ -1,10 +1,10 @@
-import { Button, Dimensions, StyleSheet, View, PermissionsAndroid } from 'react-native';
+import { Button, Dimensions, StyleSheet, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { Calendar } from 'react-native-calendario';
 import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
 import Toast from 'react-native-toast-message';
-import RNCalendarEvents from 'react-native-calendar-events';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 // https://github.com/wmcmahan/react-native-calendar-events#event-fields
 
@@ -38,16 +38,15 @@ Notifications.setNotificationHandler({
     }
 });
 
-const Home = () => {
-    useEffect(() => {
-        (async () => {
-            RNCalendarEvents.requestPermissions();
+export type RootStackParamList = {
+    CreateAppointment: { dateNum: number };
+};
 
-            RNCalendarEvents.findCalendars().then((calendars) => {
-                console.log(calendars);
-            });
-        })();
-    }, []);
+const Home = () => {
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+    const clickDay = (date: Date) => {
+        navigation.navigate('CreateAppointment', { dateNum: date.getTime() });
+    };
 
     return (
         <View style={styles.container}>
@@ -83,7 +82,7 @@ const Home = () => {
                         dayContainerStyle: {},
                         dayTextStyle: {
                             color: colors.blue[900],
-                            fontWeight: '200',
+                            fontWeight: '500',
                             fontSize: 15
                         },
                         dayOutOfRangeContainerStyle: {},
@@ -92,7 +91,7 @@ const Home = () => {
                             backgroundColor: colors.blue[500]
                         },
                         todayTextStyle: {
-                            color: '#6d95da'
+                            color: 'white'
                         },
                         activeDayContainerStyle: {
                             backgroundColor: '#6d95da'
@@ -102,7 +101,7 @@ const Home = () => {
                         },
                         nonTouchableLastMonthDayTextStyle: {}
                     }}
-                    onPress={(range) => console.log(range)}
+                    onPress={clickDay}
                 />
             </View>
             <View>

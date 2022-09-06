@@ -18,10 +18,12 @@
             "**/*"
         ],
         "ios": {
+            "userInterfaceStyle": "automatic",
             "supportsTablet": true,
             "googleServicesFile": "./google-services.json"
         },
         "android": {
+            "userInterfaceStyle": "automatic",
             "package": "com.rapofish.cars2",
             "permissions": [
                 "RECEIVE_BOOT_COMPLETED",
