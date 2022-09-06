@@ -60,18 +60,20 @@ const CreateAppointment = () => {
             <View style={styles.title}>
                 <Text style={styles.titleText}>Crear evento para el día {usableDate(date)}</Text>
             </View>
-            <TouchableOpacity onPress={() => popClock(start, setStart, 'start')}>
-                <View>
-                    <Text>Hora de Inicio</Text>
-                    <Text>{usableHour(start)}</Text>
-                </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => popClock(end, setEnd, 'end')}>
-                <View>
-                    <Text>Hora de Finalización</Text>
-                    <Text>{usableHour(end)}</Text>
-                </View>
-            </TouchableOpacity>
+            <View style={styles.box}>
+                <TouchableOpacity onPress={() => popClock(start, setStart, 'start')}>
+                    <View>
+                        <Text>Hora de Inicio</Text>
+                        <Text>{usableHour(start)}</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => popClock(end, setEnd, 'end')}>
+                    <View>
+                        <Text>Hora de Finalización</Text>
+                        <Text>{usableHour(end)}</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
             <DateTimePickerModal
                 is24Hour={true}
                 isVisible={isDatePickerVisible}
@@ -90,14 +92,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'space-between',
+        paddingTop: StatusBar.currentHeight
     },
     title: {
-        // fixed at the top
-        position: 'absolute',
-        top: StatusBar.currentHeight,
-        left: 0,
-        right: 0,
         flexDirection: 'row',
         justifyContent: 'center',
         width: '100%'
@@ -105,5 +103,11 @@ const styles = StyleSheet.create({
     titleText: {
         fontSize: 16,
         fontWeight: 'bold'
+    },
+    box: {
+        flex: 1,
+        width: '100%',
+        justifyContent: 'space-around',
+        alignItems: 'center'
     }
 });
