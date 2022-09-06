@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, StatusBar } from 'react-native';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -57,7 +57,9 @@ const CreateAppointment = () => {
 
     return (
         <View style={styles.container}>
-            <Text>Crear Evento para el día {usableDate(date)}</Text>
+            <View style={styles.title}>
+                <Text style={styles.titleText}>Crear evento para el día {usableDate(date)}</Text>
+            </View>
             <TouchableOpacity onPress={() => popClock(start, setStart, 'start')}>
                 <View>
                     <Text>Hora de Inicio</Text>
@@ -89,5 +91,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    title: {
+        // fixed at the top
+        position: 'absolute',
+        top: StatusBar.currentHeight,
+        left: 0,
+        right: 0,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        width: '100%'
+    },
+    titleText: {
+        fontSize: 16,
+        fontWeight: 'bold'
     }
 });

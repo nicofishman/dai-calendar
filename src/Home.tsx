@@ -1,5 +1,5 @@
 import { Button, Dimensions, StyleSheet, View } from 'react-native';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Calendar } from 'react-native-calendario';
 import * as Notifications from 'expo-notifications';
 import Toast from 'react-native-toast-message';
