@@ -28,6 +28,7 @@
             "permissions": [
                 "RECEIVE_BOOT_COMPLETED",
                 "SCHEDULE_EXACT_ALARM",
+                "READ_CALENDAR",
                 "WRITE_CALENDAR"
             ],
             "googleServicesFile": "./google-services.json",

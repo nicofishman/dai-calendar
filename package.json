@@ -20,6 +20,8 @@
         "eslint-plugin-n": "^15.2.5",
         "eslint-plugin-promise": "^6.0.1",
         "expo": "~46.0.9",
+        "expo-calendar": "~10.3.0",
+        "expo-calendar-helper": "^0.2.4",
         "expo-notifications": "~0.16.1",
         "expo-permissions": "~13.2.0",
         "expo-status-bar": "~1.4.0",

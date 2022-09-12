@@ -1,7 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View, StatusBar, Button, Linking, TextInput } from 'react-native';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import * as Calendar from 'expo-calendar';
 
 const usableDate = (date: Date) => {
     const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -68,6 +69,19 @@ const CreateAppointment = () => {
 
         Linking.openURL(link);
     };
+
+    useEffect(() => {
+        (async () => {
+            const { status } = await Calendar.requestCalendarPermissionsAsync();
+
+            if (status === 'granted') {
+                const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+
+                console.log('Here are all your calendars:');
+                console.log({ calendars });
+            }
+        })();
+    }, []);
 
     return (
         <View style={styles.container}>
