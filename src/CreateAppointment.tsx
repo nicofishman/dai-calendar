@@ -171,8 +171,8 @@ const CreateAppointment = () => {
                 onConfirm={handleConfirm}
             />
             <Button color="#841584" title="SAVE" onPress={() => createCalAndEvent(title, start, end)} />
+            <Toast />
         </View>
-        <Toast />
     );
 };
 
