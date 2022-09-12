@@ -5,7 +5,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import useCalendar from '@atiladev/usecalendar';
 import * as Notifications from 'expo-notifications';
 import Toast from 'react-native-toast-message';
-import { addHours } from 'date-fns';
+import { addHours, addDays } from 'date-fns';
 
 const triggerNotifications = async () => {
     await Notifications.scheduleNotificationAsync({
@@ -64,8 +64,9 @@ const usableHour = (date: Date) => {
 const CreateAppointment = () => {
     const route = useRoute();
     const { date } = route.params as { date: Date };
-    const [start, setStart] = useState<Date>(new Date(date));
-    const [end, setEnd] = useState<Date>(addHours(start, 1));
+    const dateMasUno = addDays(date, 1);
+    const [start, setStart] = useState<Date>(dateMasUno);
+    const [end, setEnd] = useState<Date>(addHours(dateMasUno, 1));
     const [isDatePickerVisible, setDatePickerVisibility] = useState<boolean>(false);
     const [title, setTitle] = useState<string>('');
     const [currentPicker, setCurrentPicker] = useState<'start' | 'end' | null>(null);
@@ -135,7 +136,7 @@ const CreateAppointment = () => {
     return (
         <View style={styles.container}>
             <View style={styles.title}>
-                <Text style={styles.titleText}>Crear evento para el día {usableDate(date)}</Text>
+                <Text style={styles.titleText}>Crear evento para el día {usableDate(dateMasUno)}</Text>
             </View>
             <View>
                 <Text>Titulo del evento: </Text>

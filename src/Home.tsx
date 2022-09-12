@@ -1,6 +1,7 @@
 import { Button, Dimensions, StyleSheet, View } from 'react-native';
 import React from 'react';
-import { Calendar } from 'react-native-calendario';
+// import { Calendar } from 'react-native-calendario';
+import { Calendar } from 'react-native-calendars';
 import * as Notifications from 'expo-notifications';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
@@ -45,67 +46,34 @@ export type RootStackParamList = {
 const Home = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const clickDay = (date: Date) => {
-        console.log('[]', date);
-
         navigation.navigate('CreateAppointment', { date });
     };
 
     return (
         <View style={styles.container}>
-            <View style={styles.calendar}>
-                <Calendar
-                    endDate={new Date(2018, 4, 5)}
-                    firstDayMonday={false}
-                    minDate={new Date(2018, 3, 20)}
-                    monthHeight={500}
-                    numberOfMonths={1}
-                    startDate={new Date(2018, 3, 30)}
-                    theme={{
-                        monthTitleTextStyle: {
-                            fontWeight: '300',
-                            fontSize: 20
-                        },
-                        emptyMonthContainerStyle: {},
-                        emptyMonthTextStyle: {
-                            fontWeight: '200'
-                        },
-                        weekColumnsContainerStyle: {},
-                        weekColumnStyle: {
-                            paddingVertical: 10
-                        },
-                        weekColumnTextStyle: {
-                            color: '#b6c1cd',
-                            fontSize: 13
-                        },
-                        nonTouchableDayContainerStyle: {},
-                        nonTouchableDayTextStyle: {},
-                        startDateContainerStyle: {},
-                        endDateContainerStyle: {},
-                        dayContainerStyle: {},
-                        dayTextStyle: {
-                            color: colors.blue[900],
-                            fontWeight: '500',
-                            fontSize: 15
-                        },
-                        dayOutOfRangeContainerStyle: {},
-                        dayOutOfRangeTextStyle: {},
-                        todayContainerStyle: {
-                            backgroundColor: colors.blue[500]
-                        },
-                        todayTextStyle: {
-                            color: 'white'
-                        },
-                        activeDayContainerStyle: {
-                            backgroundColor: '#6d95da'
-                        },
-                        activeDayTextStyle: {
-                            color: 'white'
-                        },
-                        nonTouchableLastMonthDayTextStyle: {}
-                    }}
-                    onPress={clickDay}
-                />
-            </View>
+            <Calendar
+                disableAllTouchEventsForDisabledDays={true}
+                enableSwipeMonths={true}
+                firstDay={1}
+                hideDayNames={true}
+                initialDate={new Date().toISOString()}
+                maxDate={'2033-05-30'}
+                minDate={'2002-05-10'}
+                monthFormat={'yyyy MM'}
+                onDayLongPress={day => {
+                    console.log('selected day', day);
+                }}
+                onDayPress={day => {
+                    console.log(day);
+
+                    clickDay(new Date(day.dateString));
+                }}
+                onMonthChange={month => {
+                    console.log('month changed', month);
+                }}
+                onPressArrowLeft={subtractMonth => subtractMonth()}
+                onPressArrowRight={addMonth => addMonth()}
+            />
             <View>
                 <Button color='#841584' title='307' onPress={triggerNotifications} />
             </View>
