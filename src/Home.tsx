@@ -55,17 +55,16 @@ const Home = () => {
                 disableAllTouchEventsForDisabledDays={true}
                 enableSwipeMonths={true}
                 firstDay={1}
-                hideDayNames={true}
+                hideDayNames={false}
                 initialDate={new Date().toISOString()}
                 maxDate={'2033-05-30'}
                 minDate={'2002-05-10'}
-                monthFormat={'yyyy MM'}
+                monthFormat={'MMMM yyyy'}
+                style={styles.calendar}
                 onDayLongPress={day => {
                     console.log('selected day', day);
                 }}
                 onDayPress={day => {
-                    console.log(day);
-
                     clickDay(new Date(day.dateString));
                 }}
                 onMonthChange={month => {
@@ -74,9 +73,6 @@ const Home = () => {
                 onPressArrowLeft={subtractMonth => subtractMonth()}
                 onPressArrowRight={addMonth => addMonth()}
             />
-            <View>
-                <Button color='#841584' title='307' onPress={triggerNotifications} />
-            </View>
             <Toast />
         </View>
     );
@@ -97,12 +93,11 @@ const colors = {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.blue[100],
+        // backgroundColor: colors.blue[100],
         alignItems: 'center',
         justifyContent: 'center'
     },
     calendar: {
-        width: Dimensions.get('window').width,
-        paddingHorizontal: 20
+        width: Dimensions.get('window').width - 30
     }
 });

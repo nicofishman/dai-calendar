@@ -101,45 +101,23 @@ const CreateAppointment = () => {
         if (granted) {
             await createCalendar();
             try {
-                console.log(start, end);
-
                 addEventsToCalendar(title, start, end);
                 await triggerNotifications();
             } catch (e) {
                 console.log(e);
-                // Something went wrong
             }
         } else {
             openSettings();
         }
     };
 
-    // const SaveEvent = async (title: string, start: Date, end: Date, details: string) => {
-    //     const fEnd = end.toISOString().toString().replace(/[^a-zA-Z0-9]/g, '');
-    //     const fStart = start.toISOString().toString().replace(/[^a-zA-Z0-9]/g, '');
-
-    //     title = title.split(' ').join('+');
-    //     details = details.split(' ').join('+');
-
-    //     const link = `https://calendar.google.com/calendar/r/eventedit?text=${title}&dates=${fStart}/${fEnd}&details=${details}&location=Garage+Boston+-+20+Linden+Street+-+Allston,+MA+02134`;
-
-    //     Linking.openURL(link);
-    //     await createCalAndEvent();
-    // };
-
-    // useEffect(() => {
-    //     (async () => {
-    //         await createCalAndEvent();
-    //     })();
-    // }, []);
-
     return (
         <View style={styles.container}>
             <View style={styles.title}>
                 <Text style={styles.titleText}>Crear evento para el día {usableDate(dateMasUno)}</Text>
             </View>
-            <View>
-                <Text>Titulo del evento: </Text>
+            <View style={{ width: 170 }}>
+                <Text style={{ textAlign: 'center' }}>Titulo del evento: </Text>
                 <TextInput
                     keyboardType="default"
                     placeholder="Titulo"
@@ -151,14 +129,14 @@ const CreateAppointment = () => {
             <View style={styles.box}>
                 <TouchableOpacity onPress={() => popClock(start, setStart, 'start')}>
                     <View>
-                        <Text>Hora de Inicio</Text>
-                        <Text>{usableHour(start)}</Text>
+                        <Text style={{ fontWeight: 'bold' }}>Hora de Inicio</Text>
+                        <Text style={{ textAlign: 'center' }}>{usableHour(start)}</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => popClock(end, setEnd, 'end')}>
                     <View>
-                        <Text>Hora de Finalización</Text>
-                        <Text>{usableHour(end)}</Text>
+                        <Text style={{ fontWeight: 'bold' }}>Hora de Finalización</Text>
+                        <Text style={{ textAlign: 'center' }}>{usableHour(end)}</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -189,22 +167,24 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         paddingTop: StatusBar.currentHeight
     },
     title: {
         flexDirection: 'row',
         justifyContent: 'center',
-        width: '100%'
+        width: '100%',
+        marginBottom: 20
     },
     titleText: {
         fontSize: 16,
         fontWeight: 'bold'
     },
     box: {
-        flex: 1,
+        flex: 0.6,
         width: '100%',
         justifyContent: 'space-around',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexDirection: 'row'
     }
 });
