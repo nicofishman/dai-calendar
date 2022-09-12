@@ -39,13 +39,15 @@ Notifications.setNotificationHandler({
 });
 
 export type RootStackParamList = {
-    CreateAppointment: { dateNum: number };
+    CreateAppointment: { date: Date };
 };
 
 const Home = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const clickDay = (date: Date) => {
-        navigation.navigate('CreateAppointment', { dateNum: date.getTime() });
+        console.log('[]', date);
+
+        navigation.navigate('CreateAppointment', { date });
     };
 
     return (

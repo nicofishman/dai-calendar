@@ -1,8 +1,47 @@
-import { StyleSheet, Text, TouchableOpacity, View, StatusBar, Button, Linking, TextInput } from 'react-native';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, StatusBar, Button, TextInput } from 'react-native';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import * as Calendar from 'expo-calendar';
+import useCalendar from '@atiladev/usecalendar';
+import * as Notifications from 'expo-notifications';
+import Toast from 'react-native-toast-message';
+import { addHours } from 'date-fns';
+
+const triggerNotifications = async () => {
+    await Notifications.scheduleNotificationAsync({
+        content: {
+            title: ' Te Llama Jorge! 📬',
+            body: 'Hola, soy Jorge de Recepcion.. Te llamaba por el tema de las toallas?'
+        },
+        trigger: { seconds: 1 }
+    });
+    const showToast = () => {
+        Toast.show({
+            type: 'success',
+            text1: 'GUARDADO 📬'
+        });
+    };
+
+    showToast();
+};
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => {
+        return {
+            shouldPlaySound: false,
+            shouldSetBadge: true,
+            shouldShowAlert: true,
+            priority: Notifications.AndroidNotificationPriority.MAX
+        };
+    }
+});
+
+const {
+    addEventsToCalendar,
+    createCalendar,
+    getPermission,
+    openSettings
+} = useCalendar('POLSHAPP', '#C21797', 'POLSHAPP');
 
 const usableDate = (date: Date) => {
     const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -24,14 +63,11 @@ const usableHour = (date: Date) => {
 
 const CreateAppointment = () => {
     const route = useRoute();
-    const { dateNum } = route.params as { dateNum: number };
-    const date = new Date(dateNum);
+    const { date } = route.params as { date: Date };
     const [start, setStart] = useState<Date>(new Date(date));
-    const [end, setEnd] = useState<Date>(new Date(date.getDate() + 3600000));
+    const [end, setEnd] = useState<Date>(addHours(start, 1));
     const [isDatePickerVisible, setDatePickerVisibility] = useState<boolean>(false);
     const [title, setTitle] = useState<string>('');
-    const [desc, setDesc] = useState<string>('');
-
     const [currentPicker, setCurrentPicker] = useState<'start' | 'end' | null>(null);
 
     const showDatePicker = () => {
@@ -58,30 +94,43 @@ const CreateAppointment = () => {
         hideDatePicker();
     };
 
-    const SaveEvent = (title: string, start: Date, end: Date, details: string) => {
-        const fEnd = end.toISOString().toString().replace(/[^a-zA-Z0-9]/g, '');
-        const fStart = start.toISOString().toString().replace(/[^a-zA-Z0-9]/g, '');
+    const createCalAndEvent = async (title: string, start: Date, end: Date) => {
+        const granted = await getPermission();
 
-        title = title.split(' ').join('+');
-        details = details.split(' ').join('+');
+        if (granted) {
+            await createCalendar();
+            try {
+                console.log(start, end);
 
-        const link = `https://calendar.google.com/calendar/r/eventedit?text=${title}&dates=${fStart}/${fEnd}&details=${details}&location=Garage+Boston+-+20+Linden+Street+-+Allston,+MA+02134`;
-
-        Linking.openURL(link);
+                addEventsToCalendar(title, start, end);
+                await triggerNotifications();
+            } catch (e) {
+                console.log(e);
+                // Something went wrong
+            }
+        } else {
+            openSettings();
+        }
     };
 
-    useEffect(() => {
-        (async () => {
-            const { status } = await Calendar.requestCalendarPermissionsAsync();
+    // const SaveEvent = async (title: string, start: Date, end: Date, details: string) => {
+    //     const fEnd = end.toISOString().toString().replace(/[^a-zA-Z0-9]/g, '');
+    //     const fStart = start.toISOString().toString().replace(/[^a-zA-Z0-9]/g, '');
 
-            if (status === 'granted') {
-                const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+    //     title = title.split(' ').join('+');
+    //     details = details.split(' ').join('+');
 
-                console.log('Here are all your calendars:');
-                console.log({ calendars });
-            }
-        })();
-    }, []);
+    //     const link = `https://calendar.google.com/calendar/r/eventedit?text=${title}&dates=${fStart}/${fEnd}&details=${details}&location=Garage+Boston+-+20+Linden+Street+-+Allston,+MA+02134`;
+
+    //     Linking.openURL(link);
+    //     await createCalAndEvent();
+    // };
+
+    // useEffect(() => {
+    //     (async () => {
+    //         await createCalAndEvent();
+    //     })();
+    // }, []);
 
     return (
         <View style={styles.container}>
@@ -96,16 +145,6 @@ const CreateAppointment = () => {
                     style={styles.input}
                     value={title}
                     onChangeText={setTitle}
-                />
-            </View>
-            <View>
-                <Text>Descripcion del evento: </Text>
-                <TextInput
-                    keyboardType="default"
-                    placeholder="Descripcion"
-                    style={styles.input}
-                    value={desc}
-                    onChangeText={setDesc}
                 />
             </View>
             <View style={styles.box}>
@@ -123,13 +162,14 @@ const CreateAppointment = () => {
                 </TouchableOpacity>
             </View>
             <DateTimePickerModal
+                date={date}
                 is24Hour={true}
                 isVisible={isDatePickerVisible}
                 mode="time"
                 onCancel={hideDatePicker}
                 onConfirm={handleConfirm}
             />
-            <Button color="#841584" title="SAVE" onPress={() => SaveEvent(title, start, end, desc)} />
+            <Button color="#841584" title="SAVE" onPress={() => createCalAndEvent(title, start, end)} />
         </View>
     );
 };
