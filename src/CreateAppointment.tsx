@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View, StatusBar } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, StatusBar, Button, Linking, TextInput } from 'react-native';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -23,11 +23,13 @@ const usableHour = (date: Date) => {
 
 const CreateAppointment = () => {
     const route = useRoute();
-    const { dateNum } = route.params as {dateNum: number};
+    const { dateNum } = route.params as { dateNum: number };
     const date = new Date(dateNum);
     const [start, setStart] = useState<Date>(new Date(date));
     const [end, setEnd] = useState<Date>(new Date(date.getDate() + 3600000));
     const [isDatePickerVisible, setDatePickerVisibility] = useState<boolean>(false);
+    const [title, setTitle] = useState<string>('');
+    const [desc, setDesc] = useState<string>('');
 
     const [currentPicker, setCurrentPicker] = useState<'start' | 'end' | null>(null);
 
@@ -55,10 +57,42 @@ const CreateAppointment = () => {
         hideDatePicker();
     };
 
+    const SaveEvent = (title: string, start: Date, end: Date, details: string) => {
+        const fEnd = end.toISOString().toString().replace(/[^a-zA-Z0-9]/g, '');
+        const fStart = start.toISOString().toString().replace(/[^a-zA-Z0-9]/g, '');
+
+        title = title.split(' ').join('+');
+        details = details.split(' ').join('+');
+
+        const link = `https://calendar.google.com/calendar/r/eventedit?text=${title}&dates=${fStart}/${fEnd}&details=${details}&location=Garage+Boston+-+20+Linden+Street+-+Allston,+MA+02134`;
+
+        Linking.openURL(link);
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.title}>
                 <Text style={styles.titleText}>Crear evento para el día {usableDate(date)}</Text>
+            </View>
+            <View>
+                <Text>Titulo del evento: </Text>
+                <TextInput
+                    keyboardType="default"
+                    placeholder="Titulo"
+                    style={styles.input}
+                    value={title}
+                    onChangeText={setTitle}
+                />
+            </View>
+            <View>
+                <Text>Descripcion del evento: </Text>
+                <TextInput
+                    keyboardType="default"
+                    placeholder="Descripcion"
+                    style={styles.input}
+                    value={desc}
+                    onChangeText={setDesc}
+                />
             </View>
             <View style={styles.box}>
                 <TouchableOpacity onPress={() => popClock(start, setStart, 'start')}>
@@ -81,6 +115,7 @@ const CreateAppointment = () => {
                 onCancel={hideDatePicker}
                 onConfirm={handleConfirm}
             />
+            <Button color="#841584" title="SAVE" onPress={() => SaveEvent(title, start, end, desc)} />
         </View>
     );
 };
@@ -88,6 +123,12 @@ const CreateAppointment = () => {
 export default CreateAppointment;
 
 const styles = StyleSheet.create({
+    input: {
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10
+    },
     container: {
         flex: 1,
         backgroundColor: '#fff',
